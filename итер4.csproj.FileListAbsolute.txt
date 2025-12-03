@@ -1,0 +1,16 @@
+C:\Users\Vera\source\repos\итер4\итер4\bin\Debug\итер4.exe.config
+C:\Users\Vera\source\repos\итер4\итер4\bin\Debug\итер4.exe
+C:\Users\Vera\source\repos\итер4\итер4\bin\Debug\итер4.pdb
+C:\Users\Vera\source\repos\итер4\итер4\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Vera\source\repos\итер4\итер4\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.csproj.AssemblyReference.cache
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.Form1.resources
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.Properties.Resources.resources
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.WaitingForm.resources
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.csproj.GenerateResource.cache
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.csproj.CoreCompileInputs.cache
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.csproj.Up2Date
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.exe
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.pdb
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.exe.config
+C:\Users\Vera\source\repos\итер4\итер4\obj\Debug\итер4.ShipPlacementForm.resources

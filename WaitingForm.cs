@@ -10,80 +10,79 @@ namespace итер4
 
     public partial class WaitingForm : Form
     {
-        private string playerName;
-        private Timer checkTimer;
-        private bool openedShipForm = false;
-        private HttpClient client;
+        private readonly string _playerName;
+        private readonly IGameService _service;
+        private bool _openedShipForm = false;
 
-        public WaitingForm(string name)
+        public WaitingForm(string playerName, IGameService service)
         {
             InitializeComponent();
-            playerName = name;
-            client = new HttpClient();
+            _playerName = playerName;
+            _service = service ?? throw new ArgumentNullException(nameof(service));
 
             statusLabel.Text = "Ожидание других игроков...";
             progressBar1.Style = ProgressBarStyle.Marquee;
 
-            checkTimer = new Timer();
-            checkTimer.Interval = 2000;
-            checkTimer.Tick += CheckTimer_Tick;
+            this.Load += WaitingForm_Load;
+            this.FormClosed += WaitingForm_FormClosed;
 
-            this.Load += (s, e) => checkTimer.Start();
+            _service.StateUpdated += Service_StateUpdated;
         }
 
-        private async void CheckTimer_Tick(object sender, EventArgs e)
+        private void WaitingForm_Load(object sender, EventArgs e)
         {
-            try
+            _service.StartPolling(2000); 
+        }
+
+        private void WaitingForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _service.StateUpdated -= Service_StateUpdated;
+            _service.StopPolling();
+        }
+
+        private void Service_StateUpdated(object sender, GameStateEventArgs e)
+        {
+            if (InvokeRequired)
             {
-                var response = await client.GetAsync("http://127.0.0.1:5000/state");
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var state = Newtonsoft.Json.JsonConvert.DeserializeObject<GameState>(json);
-
-                    if (state != null && state.game_ready && !openedShipForm)
-                    {
-                        openedShipForm = true;
-                        checkTimer.Stop();
-                        progressBar1.Style = ProgressBarStyle.Blocks;
-                        statusLabel.Text = "Игрок найден! Игра начинается...";
-
-                        ShipPlacementForm shipForm = new ShipPlacementForm(playerName);
-                        shipForm.FormClosed += (s, args) => this.Close();
-                        shipForm.Show();
-
-                        this.Hide();
-                    }
-                    else if (state != null)
-                    {
-                        statusLabel.Text = $"Ожидание игроков... ({state.connected}/2)";
-                    }
-                }
+                BeginInvoke(new Action(() => ProcessState(e.State)));
             }
-            catch (Exception ex)
+            else
             {
-                statusLabel.Text = "Ошибка связи с сервером...";
-                Console.WriteLine(ex.Message);
+                ProcessState(e.State);
+            }
+        }
+
+        private void ProcessState(GameState state)
+        {
+            if (state == null) return;
+
+            statusLabel.Text = $"Ожидание игроков... ({state.connected}/2)";
+
+            if (state.game_ready && !_openedShipForm)
+            {
+                _openedShipForm = true;
+                _service.StopPolling();
+                progressBar1.Style = ProgressBarStyle.Blocks;
+                statusLabel.Text = "Игрок найден! Игра начинается...";
+
+                var shipForm = new ShipPlacementForm(_playerName, _service);
+                shipForm.FormClosed += (s, a) => this.Close();
+                shipForm.Show();
+                this.Hide();
             }
         }
 
         private void cancelbutton_Click_1(object sender, EventArgs e)
         {
-            checkTimer.Stop();
-            client?.Dispose();
+            _service.StopPolling();
             this.Close();
         }
-
-        private class GameState
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            public List<string> players { get; set; }
-            public int connected { get; set; }
-            public bool game_ready { get; set; }
+            base.OnFormClosing(e);
         }
-
-       
     }
+
 
 
 }

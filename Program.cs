@@ -16,7 +16,12 @@ namespace итер4
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AuthForm());
+            using (var service = new HttpGameService("http://127.0.0.1:5000"))
+            {
+
+                Application.Run(new AuthForm(service));
+
+            }
         }
     }
 }
